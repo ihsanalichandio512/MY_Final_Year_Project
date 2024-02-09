@@ -3,9 +3,6 @@
 // app/Http/Controllers/AdminController.php
 
 namespace App\Http\Controllers;
-use App\Http\Middleware\adminMiddleware;
-use App\Http\middleware\studentMiddleware;
-use App\Http\middleware\faciltyMiddleware;
 
 use App\Models\semester;
 use Illuminate\Support\Facades\DB;
