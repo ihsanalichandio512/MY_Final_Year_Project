@@ -27,14 +27,14 @@
         <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
             <div class="bg-light rounded p-4 p-sm-5 my-4 mx-3">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <a href="{{ route('showAttendencePage') }}" class="">
+                    <a href="" class="">
                         <div class="">
                             <img class="img-fluid" src="{{ URL::asset('images/hd logo.png') }}">
                         </div>
                     </a>
                 </div>
                 <h3 class="text-center">Mark Attendance</h3>
-                <form method="get" action="{{ route('getstudentdata') }}">
+                <form method="get" action="{{ route('showAttendancePage') }}">
                     @csrf
 
                     <div class="form-floating mb-3">
@@ -45,88 +45,110 @@
                             @endforeach
                         </select>
 
-                        <select class="form-control mb-4" name="degree" id="degree">
-                            <option value="" selected disabled>---Select degree---</option>
-                            @foreach ($degrees as $degreeItem)
-                                <option value="{{ $degreeItem->Degree_id }}">{{ $degreeItem->Title }}</option>
-                            @endforeach
-                        </select>
-
-                        <select class="form-control mb-4" name="semester" id="semester">
-                            <option value="" selected disabled>---Select semester---</option>
-                            @foreach ($semesters as $semesterItem)
-                                <option value="{{ $semesterItem->Semester_id }}">{{ $semesterItem->Title }}</option>
-                            @endforeach
-                        </select>
-                        @error('batch')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
                     </div>
 
-                    <a href="" id="getStudentsLink" class="btn btn-primary py-3 w-100 mb-4">Get Students</a>
+                    <div class="form-floating mb-3">
+                        <select id="degree" class="form-control mb-4">
+                            <option value="" selected disabled>---Select Degree---</option>
+
+                        </select>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <select id="semester" class="form-control mb-4">
+                            <option value="" selected disabled>---Select Semester---</option>
+
+                        </select>
+                    </div>
                 </form>
 
 
 
-                <div class="col-12">
-                    <div class="bg-light rounded p-4">
-                        <h6 class="mb-4">Responsive Table</h6>
-                        <div class="table-responsive">
-                            <table class="table" id="studentsTable">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Responsive Table</h6>
+                    <div class="table-responsive">
+                        <table class="table" id="students">
+                            <thead>
                                 <tr>
-                                    <th scope="col">Id</th>
-                                    <th scope="col">Photo</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Present</th>
-                                    <th scope="col">Absent</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">First Name</th>
+                                    <th scope="col">Last Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Country</th>
+                                    <th scope="col">ZIP</th>
+                                    <th scope="col">Status</th>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($students as $student)
-                                        <tr>
-                                            <th scope="row">{{ $student->Student_id }}</th>
-                                            <td>{{ $student->Photo }}</td>
-                                            <td>{{ $student->Name }}</td>
-                                            <td>
-                                                <input class="form-check-input" name="attendance" id="present"
-                                                    type="radio" value="present" aria-label="Text for screen reader" />
-                                            </td>
-                                            <td>
-                                                <input class="form-check-input" name="attendance" id="absent"
-                                                    type="radio" value="absent" aria-label="Text for screen reader" />
-                                            </td>
-                                        </tr>
-                                    @endforeach
-
-                            </table>
-                        </div>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>John</td>
+                                    <td>Doe</td>
+                                    <td>jhon@email.com</td>
+                                    <td>USA</td>
+                                    <td>123</td>
+                                    <td>Member</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
+                
+
+                {{-- Jquery Starts --}}
+
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script>
+                    $(document).ready(function() {
+                        $('#batch').change(function() {
+                            var batch_id = $(this).val();
+                            $.get('/get-degrees', {
+                                batch_id: batch_id
+                            }, function(data) {
+                                $('#degree').empty();
+                                $.each(data, function(index, degree) {
+                                    $('#degree').append('<option value="' + degree.id + '">' + degree
+                                        .name + '</option>');
+                                });
+                            });
+                        });
+
+                        $('#degree').change(function() {
+                            var degree_id = $(this).val();
+                            $.get('/get-semesters', {
+                                degree_id: degree_id
+                            }, function(data) {
+                                $('#semester').empty();
+                                $.each(data, function(index, semester) {
+                                    $('#semester').append('<option value="' + semester.id + '">' +
+                                        semester.name + '</option>');
+                                });
+                            });
+                        });
+
+                        $('#semester').change(function() {
+                            var semester_id = $(this).val();
+                            $.get('/get-students', {
+                                semester_id: semester_id
+                            }, function(data) {
+                                $('#students').empty();
+                                $.each(data, function(index, student) {
+                                    $('#students').append('<tr><td>' + student.name + '</td></tr>');
+                                });
+                            });
+                        });
+                    });
+                </script>
+
+                {{-- Jquery Ends --}}
+
+
             </div>
 
         </div>
     </div>
     <!-- Sign Up End -->
     </div>
-
-
-    <script>
-        document.getElementById('getStudentsLink').addEventListener('click', function(event) {
-            event.preventDefault();
-
-            // Get selected values
-            var batchId = document.getElementById('batch').value;
-            var degreeId = document.getElementById('degree').value;
-            var semesterId = document.getElementById('semester').value;
-
-            // Construct URL
-            var url = "{{ route('showAttendencePage') }}";
-            url += "?batchName=" + batchId + "&degreeName=" + degreeId + "&semesterName=" + semesterId;
-
-            // Redirect to URL
-            window.location.href = url;
-        });
-    </script>
-
 
 @endsection

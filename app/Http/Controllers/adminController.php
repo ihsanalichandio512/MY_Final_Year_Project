@@ -18,7 +18,7 @@ class AdminController extends Controller
             $show_degree = DB::table('degrees')->get();
             return view('Pages.admin.home',['semester'=>$show_semester,'degree'=>$show_degree]);
         }else{
-            return view(route('login.page'));
+            return view('index');
         }
 
     }

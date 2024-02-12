@@ -93,7 +93,7 @@
                     <form action="{{ route('check.login') }}" enctype="multipart/form-data" method="post">
                         @csrf
                         <div class="form-floating mb-3">
-                            <input type="text" name="username" id="floatingInput" class="form-control _ge_de_ol"
+                            <input type="text" name="Username" id="floatingInput" class="form-control _ge_de_ol"
                                 type="text" placeholder="Enter Username" required="" aria-required="true">
                             <label for="floatingInput">Username</label>
                             @error('username')
@@ -101,7 +101,7 @@
                             @enderror
                         </div>
                         <div class="form-floating mb-4">
-                            <input type="password" name="password" autocomplete="on" id="floatingPassword"
+                            <input type="password" name="Password" autocomplete="on" id="floatingPassword"
                                 class="showpass form-control _ge_de_ol" type="text" placeholder="Enter Password"
                                 required="" aria-required="true">
                             <label for="floatingPassword">Password</label>

@@ -27,6 +27,7 @@ use Faker\Guesser\Name;
 use App\Http\Middleware\adminMiddleware;
 use App\Http\middleware\studentMiddleware;
 use App\Http\middleware\faciltyMiddleware;
+use PHPUnit\TextUI\XmlConfiguration\Group;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,41 +40,87 @@ use App\Http\middleware\faciltyMiddleware;
 |
 */
 
+Route::group(['middleware'=>['web','checkAdmin']],function(){
+
+    Route::get('/admin',[adminController::class,'index'])->name('admin.home');
+    Route::get('/admin/showsubject',[addsubjectController::class,'showsubject'])->name('show.subject');
+    Route::get('/admin/addsubject',[addsubjectController::class,'addubject'])->name('add.subject');
+    Route::get('/admin/showbatch',[addbatchController::class,'showBatch'])->name('showbatch');
+    Route::get('/admin/addbatch',[addbatchController::class,'addBatch'])->name('addbatch');
+    Route::get('/admin/showdepartment',[adddepartmentController::class,'showdepartment'])->name('showdepartment');
+    Route::get('/admin/adddepartment',[adddepartmentController::class,'adddepartment'])->name('adddepartment');
+    Route::get('/admin/showrole',[addroleController::class,'showrole'])->name('showrole');
+    Route::get('/admin/addrole',[addroleController::class,'addrole'])->name('addrole');
+    Route::get('/admin/showdegree',[adddegreeController::class,'showdegree'])->name('showdegree');
+    Route::get('/admin/adddegree',[adddegreeController::class,'adddegree'])->name('adddegree');
+    Route::get('/admin/showfaclity',[facuiltyController::class,'showfaclity'])->name('showfaclity');
+    Route::post('/admin/addfacuilty',[facuiltyController::class,'addfacuilty'])->name('addfacuilty');
+    Route::get('/logout',[LogoutController::class,'destroy'])->name('logout');
+    
+});
+Route::group(['middleware'=>['web','checkFaclity']],function(){
+    Route::get('/show/faculity/home',[facuiltyControllerToSHow::class,'showFaculityPage'])->name('showFaculityPage');
+    Route::get('/show/attendance/page', [attendanceController::class, 'index'])->name('showAttendancePage');
+    Route::get('/get-degrees', [attendanceController::class, 'getDegrees'])->name('getDegree');
+    Route::get('/get-semesters', [attendanceController::class, 'getSemesters'])->name('getSemester');
+    Route::get('/get-students', [attendanceController::class, 'getStudents'])->name('getStudents');
+});
+
+Route::group(['middleware',['web','checkStudent']],function(){
+
+});
+
+Route::group(['middleware'=>['web','checkUser']],function(){
+    Route::get('/users/pages/home',[userHomeController::class,'index'])->name('users.home.page');
+    Route::get('/user/signup', [signupUserController::class, 'index'])->name('user.signup.view');
+    Route::post('/user/signup/data',[signupUserController::class,'store'])->name('user.signup.add');
+    Route::get('/users/forgot',[forgotPasswordController::class,'index'])->name('forgot.password');
+    Route::post('/users/forgot',[forgotPasswordController::class,'forgotpassword'])->name('forgot.password.post');
+    Route::get('/users/resetPassword/{token}',[forgotPasswordController::class,'resetPassword'])->name('reset.password');
+    Route::post('/users/resetpassword',[forgotPasswordController::class,'resetPasswordpost'])->name('reset.password.post');
+    
+});
 
 
-
-// routes/web.php
-Route::get('/users/pages/home',[userHomeController::class,'index'])->name('users.home.page');
-Route::get('/login/page', [loginController::class, 'index'])->name('login.page');
-Route::get('api/login', [loginController::class, 'login'])->name('login.api');
-Route::get('/user/signup', [signupUserController::class, 'index'])->name('user.signup.view');
-Route::post('/user/signup/data',[signupUserController::class,'store'])->name('user.signup.add');
+Route::get('/', [loginController::class, 'index'])->name('login.page');
 Route::post('/check/login', [loginController::class, 'store'])->name('check.login');
-Route::get('/admin',[adminController::class,'index'])->name('admin.home');
-Route::get('/users/forgot',[forgotPasswordController::class,'index'])->name('forgot.password');
-Route::post('/users/forgot',[forgotPasswordController::class,'forgotpassword'])->name('forgot.password.post');
-Route::get('/users/resetPassword/{token}',[forgotPasswordController::class,'resetPassword'])->name('reset.password');
-Route::post('/users/resetpassword',[forgotPasswordController::class,'resetPasswordpost'])->name('reset.password.post');
-Route::get('/admin/showsubject',[addsubjectController::class,'showsubject'])->name('show.subject');
-Route::get('/admin/addsubject',[addsubjectController::class,'addubject'])->name('add.subject');
-Route::get('/admin/showbatch',[addbatchController::class,'showBatch'])->name('showbatch');
-Route::get('/admin/addbatch',[addbatchController::class,'addBatch'])->name('addbatch');
-Route::get('/admin/showdepartment',[adddepartmentController::class,'showdepartment'])->name('showdepartment');
-Route::get('/admin/adddepartment',[adddepartmentController::class,'adddepartment'])->name('adddepartment');
-Route::get('/admin/showrole',[addroleController::class,'showrole'])->name('showrole');
-Route::get('/admin/addrole',[addroleController::class,'addrole'])->name('addrole');
-Route::get('/admin/showdegree',[adddegreeController::class,'showdegree'])->name('showdegree');
-Route::get('/admin/adddegree',[adddegreeController::class,'adddegree'])->name('adddegree');
-Route::get('/admin/showfaclity',[facuiltyController::class,'showfaclity'])->name('showfaclity');
-Route::post('/admin/addfacuilty',[facuiltyController::class,'addfacuilty'])->name('addfacuilty');
-
 Route::get('/logout',[LogoutController::class,'destroy'])->name('logout');
 
+// routes/web.php
+// Route::get('api/login', [loginController::class, 'login'])->name('login.api');
+// Route::get('/users/pages/home',[userHomeController::class,'index'])->name('users.home.page');
+// Route::get('/user/signup', [signupUserController::class, 'index'])->name('user.signup.view');
+// Route::post('/user/signup/data',[signupUserController::class,'store'])->name('user.signup.add');
+// Route::get('/admin',[adminController::class,'index'])->name('admin.home');
+// Route::get('/users/forgot',[forgotPasswordController::class,'index'])->name('forgot.password');
+// Route::post('/users/forgot',[forgotPasswordController::class,'forgotpassword'])->name('forgot.password.post');
+// Route::get('/users/resetPassword/{token}',[forgotPasswordController::class,'resetPassword'])->name('reset.password');
+// Route::post('/users/resetpassword',[forgotPasswordController::class,'resetPasswordpost'])->name('reset.password.post');
+// Route::get('/admin/showsubject',[addsubjectController::class,'showsubject'])->name('show.subject');
+// Route::get('/admin/addsubject',[addsubjectController::class,'addubject'])->name('add.subject');
+// Route::get('/admin/showbatch',[addbatchController::class,'showBatch'])->name('showbatch');
+// Route::get('/admin/addbatch',[addbatchController::class,'addBatch'])->name('addbatch');
+// Route::get('/admin/showdepartment',[adddepartmentController::class,'showdepartment'])->name('showdepartment');
+// Route::get('/admin/adddepartment',[adddepartmentController::class,'adddepartment'])->name('adddepartment');
+// Route::get('/admin/showrole',[addroleController::class,'showrole'])->name('showrole');
+// Route::get('/admin/addrole',[addroleController::class,'addrole'])->name('addrole');
+// Route::get('/admin/showdegree',[adddegreeController::class,'showdegree'])->name('showdegree');
+// Route::get('/admin/adddegree',[adddegreeController::class,'adddegree'])->name('adddegree');
+// Route::get('/admin/showfaclity',[facuiltyController::class,'showfaclity'])->name('showfaclity');
+// Route::post('/admin/addfacuilty',[facuiltyController::class,'addfacuilty'])->name('addfacuilty');
 
-Route::get('/show/faculity/home',[facuiltyControllerToSHow::class,'showFaculityPage'])->name('showFaculityPage');
+// Route::get('/logout',[LogoutController::class,'destroy'])->name('logout');
 
 
-// In routes/web.php
-Route::get('/show/attendance/page', [attendanceController::class, 'showAttendencePage'])->name('showAttendencePage');
-Route::get('/get/student/data', [attendanceController::class, 'getstudentdata'])->name('getstudentdata');
+// Route::get('/show/faculity/home',[facuiltyControllerToSHow::class,'showFaculityPage'])->name('showFaculityPage');
 
+
+// // In routes/web.php
+// Route::get('/show/attendance/page', [attendanceController::class, 'showAttendencePage'])->name('showAttendencePage');
+// Route::get('/get/student/data', [attendanceController::class, 'getstudentdata'])->name('getstudentdata');
+
+
+// Route::get('/show/attendance/page', [attendanceController::class, 'index'])->name('showAttendancePage');
+// Route::get('/get-degrees', [attendanceController::class, 'getDegrees'])->name('getDegree');
+// Route::get('/get-semesters', [attendanceController::class, 'getSemesters'])->name('getSemester');
+// Route::get('/get-students', [attendanceController::class, 'getStudents'])->name('getStudents');

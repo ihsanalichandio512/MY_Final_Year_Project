@@ -72,29 +72,35 @@ class loginController extends Controller
      */
     public function store(Request $request)
     {
-        // if (Auth::check()) {
-        $getusername = $request->username;
-        $getPassword = $request->password;
+        $getUsername = $request->Username;
+$getPassword = $request->Password;
 
-        $user = users::where('Username','=',$getusername)->first();
+$user = users::where('Username', '=', $getUsername)->first();
 
-if (Hash::check($getPassword,optional($user)->Password))
-{
-   
-        $show = Session::put("user",$user);
-   
-    return redirect()->route('admin.home')->with("msg","Succesfully Logged in");
-    } else {
-        return redirect()->route('login.page')->with("msg2","Email or Password Is Invaild");
-
-    // }
-   
-
+if (!$user) {
+    return redirect()->route('login.page')->with("msg2", "User not found");
 }
 
+if (Hash::check($getPassword, $user->Password)) {
+    session()->put("user", $user);
 
-
+    if ($user->Role_id == 1) {
+        return redirect()->route('admin.home')->with("msg", "Successfully logged in as Admin");
+    } elseif ($user->Role_id == 3) {
+        return redirect()->route('showFaculityPage')->with("msg", "Successfully logged in as Faculty");
+    } elseif($user->Role_id == 2) {
+        return redirect()->route('users.home.page')->with('msg', 'Successfully logged in as User');
+    }
+} else {
+    return redirect()->route('login.page')->with("msg2", "Username or password is invalid");
 }
+
+    }
+
+
+
+
+// }
 
 
     /**

@@ -13,63 +13,36 @@ use App\Http\middleware\studentMiddleware;
 use App\Http\middleware\faciltyMiddleware;
 class attendanceController extends Controller
 {
-    function showAttendencePage(Request $request) {
+    public function index(Request $request) {
+        $batches = DB::table('batch')->get();
         if(Session::has('user')){
-            $batch = DB::table('batch')->get();
-            $degree = degrees::all();
-            $semester = DB::table('semester')->get();
-
-            $batchName = $request->input('batch');
-            $semesterName = $request->input('semester');
-            $degreeName = $request->input('degree');
-    
-            $students = DB::table('students')
-                ->join('batch', 'students.Batch_id', '=', 'batch.Batch_id')
-                ->join('semester', 'students.Semester_id', '=', 'semester.Semester_id')
-                ->join('degrees', 'students.Degree_id', '=', 'degrees.Degree_id')
-                ->select('students.*')
-                ->where('batch.Title', '=', $batchName)
-                ->where('semester.Title', '=', $semesterName)
-                ->where('degrees.Title', '=', $degreeName)
-                ->get();
-    
-            return view('Pages.facuilty.markAttendence',[
-                'students'=>$students,
-                'batches' => $batch,
-                'degrees' => $degree,
-                'semesters' => $semester
-        ]);
-            // return view('Pages.facuilty.markAttendence',['batches'=>$batch,'degrees'=>$degree,'semesters'=>$semester]);   
-        
-            // return view('Pages.facuilty.markAttendence', [
-            //     'batches' => $batch,
-            //     'degrees' => $degree,
-            //     'semesters' => $semester
-            // ]);
-
+            return view(route('showFaculityPage'), compact('batches'));
         }else{
             return view('index');
         }
+}
+public function getDegrees(Request $request)
+    {
+        $batch_id = $request->batch_id;
+        $batch = batch::findOrFail($batch_id);
+        $degrees = $batch->degrees;
+        return response()->json($degrees);
     }
 
-    // function getstudentdata(Request $request){
-    //     $batchName = $request->input('batch');
-    //     $semesterName = $request->input('semester');
-    //     $degreeName = $request->input('degree');
+    public function getSemesters(Request $request)
+    {
+        $degree_id = $request->degree_id;
+        // Assuming you have relationships setup, you can get semesters like this
+        $semesters = degrees::findOrFail($degree_id)->semesters;
+        return response()->json($semesters);
+    }
 
-    //     $students = DB::table('students')
-    //         ->join('batch', 'students.Batch_id', '=', 'batch.Batch_id')
-    //         ->join('semester', 'students.Semester_id', '=', 'semester.Semester_id')
-    //         ->join('degrees', 'students.Degree_id', '=', 'degrees.Degree_id')
-    //         ->select('students.*')
-    //         ->where('batch.Title', '=', $batchName)
-    //         ->where('semester.Title', '=', $semesterName)
-    //         ->where('degrees.Title', '=', $degreeName)
-    //         ->get();
-
-    //     return view('Pages.facuilty.markAttendence',['students'=>$students]);
-
-    // }
+    public function getStudents(Request $request)
+    {
+        $semester_id = $request->semester_id;
+        // Assuming you have relationships setup, you can get students like this
+        $students = semester::findOrFail($semester_id)->students;
+        return response()->json($students);
+    }
 
 }
-
