@@ -8,19 +8,18 @@ use App\Models\semester;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use App\Http\Middleware\adminMiddleware;
-use App\Http\middleware\studentMiddleware;
-use App\Http\middleware\faciltyMiddleware;
 class attendanceController extends Controller
 {
     public function index(Request $request) {
         $batches = DB::table('batch')->get();
-        if(Session::has('user')){
-            return view(route('showFaculityPage'), compact('batches'));
-        }else{
-            return view('index');
+        if (Session::has('user')) {
+                return view('Pages.facuilty.markAttendance', compact('batches'));
+            
         }
-}
+            return view(route('login.page'));
+        }
+
+        
 public function getDegrees(Request $request)
     {
         $batch_id = $request->batch_id;

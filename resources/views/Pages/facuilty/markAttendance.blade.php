@@ -1,8 +1,6 @@
 @extends('Layouts.app')
 @include('Partials.navbar')
 
-@section('facuiltyhomepage')
-
-facuilty page
-
+@section('attendence')
+    <h1>attendacne</h1>
 @endsection

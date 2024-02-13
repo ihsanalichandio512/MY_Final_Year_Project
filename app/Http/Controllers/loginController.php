@@ -14,6 +14,12 @@ use App\Http\Middleware\adminMiddleware;
 use App\Http\middleware\studentMiddleware;
 use App\Http\middleware\faciltyMiddleware;
 
+/**
+ * Store a newly created resource in storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return \Illuminate\Http\Response
+ */
 
 class loginController extends Controller
 {
@@ -37,70 +43,108 @@ class loginController extends Controller
     // }
 
 
-        public function index()
-        {
-            // // If the user is already authenticated, redirect to the home page
-            // if (Auth::check()) {
-            //     return redirect(route('users.home.page'));
-           
+    public function index()
+    {
 
-            // If 'user' session exists, redirect to the home page
-            if (Session::has('user')) {
+        if (Session::has('user')) {
+            $user = Session::get('user');
+            if ($user->Role_id == 1) {
                 return view('Pages.admin.home');
-            }else{
-            // If not authenticated and 'user' session does not exist, redirect to the login page
-            return view('index');
+            } elseif ($user->Role_id == 3) {
+                return view('Pages.facuilty.home');
+            } elseif ($user->Role_id == 4) {
+                return "Student portal is under working";
             }
-        // }
         }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    
+        return view('index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
-    {
-        $getUsername = $request->Username;
-$getPassword = $request->Password;
-
-$user = users::where('Username', '=', $getUsername)->first();
-
-if (!$user) {
-    return redirect()->route('login.page')->with("msg2", "User not found");
+{
+    $getUsername = $request->Username;
+    $getPassword = $request->Password;
+    $user = users::where('Username', '=', $getUsername)->first();
+    if ($user) {
+        if (Hash::check($getPassword, $user->Password)) {
+            Session::put('user', $user);
+            if ($user->Role_id == 1) {
+                return view('Pages.admin.home')->with('msg', 'Successfully Logged in As Admin');
+            } elseif ($user->Role_id == 3) {
+                return view('Pages.facuilty.home')->with('msg', 'Successfully Logged in As Faculty');
+            } elseif ($user->Role_id == 4) {
+                return view('Pages.users.home')->with('msg', 'Successfully Logged in As User');
+            } else {
+                return response()->view('errors.404', [], 404);
+            }
+        } else {
+            return view('login.page')->with('error', 'Incorrect password');
+        }
+    } else {
+        return view('index')->with('error', 'User not found');
+    }
 }
 
-if (Hash::check($getPassword, $user->Password)) {
-    session()->put("user", $user);
 
-    if ($user->Role_id == 1) {
-        return redirect()->route('admin.home')->with("msg", "Successfully logged in as Admin");
-    } elseif ($user->Role_id == 3) {
-        return redirect()->route('showFaculityPage')->with("msg", "Successfully logged in as Faculty");
-    } elseif($user->Role_id == 2) {
-        return redirect()->route('users.home.page')->with('msg', 'Successfully logged in as User');
-    }
-} else {
-    return redirect()->route('login.page')->with("msg2", "Username or password is invalid");
-}
-
-    }
-
-
-
-
+//     public function store(Request $request)
+// {
+//     $getUsername = $request->Username;
+//     $getPassword = $request->Password;
+//     $user = users::where('Username', '=', $getUsername)->first();
+//     // $users = users::all();
+//     if ($user) {
+//         // Check if password matches
+//         if (Hash::check($getPassword, $user->Password)) {
+//             // Check user role and return appropriate view
+//             Session::put('user', $user);
+//             if ($user->Role_id == 1) {
+//                 return view(route('admin.home'))->with('msg', 'Successfully Logged in As Admin');
+//             } elseif ($user->Role_id == 3) {
+//                 return view(route('showhome'))->with('msg', 'Successfully Logged in As Faclity');
+//             } elseif ($user->Role_id == 4) {
+//                 return view(route('users.home.page'))->with('msg', 'Successfully Logged in As User');
+//             } else {
+//                 return response()->view('errors.404', [], 404);
+//             }
+//         } else {
+//             // Incorrect password
+//             return view(route('login.page'))->with('error', 'Incorrect password');
+//         }
+//     } else {
+//         // User does not exist
+//         return view('index')->with('error', 'User not found');
+//     }
 // }
+
+    
+
+    // public function store(Request $request)
+    // {
+
+    //     $getUsername = $request->Username;
+    //     $getPassword = $request->Password;
+    //     $user = users::where('Username', '=', $getUsername)->first();
+    //     if (Hash::check($getPassword, $user->Password)) {
+
+    //         if ($user->Role_id == 1) {
+    //             return view('Pages.admin.home')->with('msg', 'Successfully Logged in As Admin');
+    //         } elseif ($user->Role_id == 3) {
+    //             return view('Pages.facuilty.home')->with('msg', 'Successfully Logged in As Faclity');
+    //         } elseif ($user->Role_id == 4) {
+    //             return view('Pages.users.home')->with('msg', 'Successfully Logged in As User');
+    //         } else {
+    //             return 404;
+    //         }
+    //     } else {
+    //         return view('index');
+    //     }
+    // }
+
+
+
+
+    // }
 
 
     /**

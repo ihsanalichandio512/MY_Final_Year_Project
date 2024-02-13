@@ -20,6 +20,7 @@ use App\Http\Controllers\adddepartmentController;
 use App\Http\Controllers\attendanceController;
 use App\Http\Controllers\forgotPasswordController;
 use App\Http\Controllers\Auth\passwordResetController;
+use App\Http\Controllers\faclityController;
 use App\Http\Controllers\facuiltyControllerToSHow;
 use App\Http\Controllers\studentController;
 use App\Http\Middleware\CheckRole;
@@ -27,6 +28,7 @@ use Faker\Guesser\Name;
 use App\Http\Middleware\adminMiddleware;
 use App\Http\middleware\studentMiddleware;
 use App\Http\middleware\faciltyMiddleware;
+use GuzzleHttp\Middleware;
 use PHPUnit\TextUI\XmlConfiguration\Group;
 
 /*
@@ -41,7 +43,6 @@ use PHPUnit\TextUI\XmlConfiguration\Group;
 */
 
 Route::group(['middleware'=>['web','checkAdmin']],function(){
-
     Route::get('/admin',[adminController::class,'index'])->name('admin.home');
     Route::get('/admin/showsubject',[addsubjectController::class,'showsubject'])->name('show.subject');
     Route::get('/admin/addsubject',[addsubjectController::class,'addubject'])->name('add.subject');
@@ -58,12 +59,9 @@ Route::group(['middleware'=>['web','checkAdmin']],function(){
     Route::get('/logout',[LogoutController::class,'destroy'])->name('logout');
     
 });
+
 Route::group(['middleware'=>['web','checkFaclity']],function(){
-    Route::get('/show/faculity/home',[facuiltyControllerToSHow::class,'showFaculityPage'])->name('showFaculityPage');
-    Route::get('/show/attendance/page', [attendanceController::class, 'index'])->name('showAttendancePage');
-    Route::get('/get-degrees', [attendanceController::class, 'getDegrees'])->name('getDegree');
-    Route::get('/get-semesters', [attendanceController::class, 'getSemesters'])->name('getSemester');
-    Route::get('/get-students', [attendanceController::class, 'getStudents'])->name('getStudents');
+    Route::get('/show/faclity/page',[faclityController::class,'showhome'])->name('showhome');
 });
 
 Route::group(['middleware',['web','checkStudent']],function(){
