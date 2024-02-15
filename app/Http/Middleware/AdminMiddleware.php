@@ -19,6 +19,8 @@ class AdminMiddleware
         if(auth()->user() && auth()->user()->Role_id == 1 ){
             return $next($request);
         }
-        return redirect('/');
+        // return redirect('/');
+        return $next($request);
+
     }
 }

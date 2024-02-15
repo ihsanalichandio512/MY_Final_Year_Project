@@ -43,9 +43,9 @@ use PHPUnit\TextUI\XmlConfiguration\Group;
 */
 
 Route::group(['middleware'=>['web','checkAdmin']],function(){
-    Route::get('/admin',[adminController::class,'index'])->name('admin.home');
-    Route::get('/admin/showsubject',[addsubjectController::class,'showsubject'])->name('show.subject');
-    Route::get('/admin/addsubject',[addsubjectController::class,'addubject'])->name('add.subject');
+    Route::get('/admin',[adminController::class,'index'])->name('adminhome');
+    Route::get('/admin/showsubject',[addsubjectController::class,'showsubject'])->name('showsubject');
+    Route::get('/admin/addsubject',[addsubjectController::class,'addubject'])->name('addsubject');
     Route::get('/admin/showbatch',[addbatchController::class,'showBatch'])->name('showbatch');
     Route::get('/admin/addbatch',[addbatchController::class,'addBatch'])->name('addbatch');
     Route::get('/admin/showdepartment',[adddepartmentController::class,'showdepartment'])->name('showdepartment');
@@ -62,6 +62,11 @@ Route::group(['middleware'=>['web','checkAdmin']],function(){
 
 Route::group(['middleware'=>['web','checkFaclity']],function(){
     Route::get('/show/faclity/page',[faclityController::class,'showhome'])->name('showhome');
+    Route::get('/show/attendance/page',[faclityController::class,'showAttendancePage'])->name('showAttendancePage');
+
+    Route::get('/get-degrees', [faclityController::class, 'getDegrees']);
+Route::get('/get-semesters', [faclityController::class, 'getSemesters']);
+Route::get('/get-students', [faclityController::class, 'getStudents']);
 });
 
 Route::group(['middleware',['web','checkStudent']],function(){

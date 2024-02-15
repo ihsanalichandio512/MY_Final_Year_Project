@@ -63,18 +63,20 @@ class loginController extends Controller
 
     public function store(Request $request)
 {
+
     $getUsername = $request->Username;
     $getPassword = $request->Password;
+
     $user = users::where('Username', '=', $getUsername)->first();
     if ($user) {
         if (Hash::check($getPassword, $user->Password)) {
             Session::put('user', $user);
             if ($user->Role_id == 1) {
-                return view('Pages.admin.home')->with('msg', 'Successfully Logged in As Admin');
+                return redirect("/admin");
             } elseif ($user->Role_id == 3) {
-                return view('Pages.facuilty.home')->with('msg', 'Successfully Logged in As Faculty');
+                return redirect('/show/faclity/page')->with('msg', 'Successfully Logged in As Faculty');
             } elseif ($user->Role_id == 4) {
-                return view('Pages.users.home')->with('msg', 'Successfully Logged in As User');
+                return redirect('/users/pages/home')->with('msg', 'Successfully Logged in As User');
             } else {
                 return response()->view('errors.404', [], 404);
             }

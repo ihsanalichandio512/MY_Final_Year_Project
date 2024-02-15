@@ -19,6 +19,7 @@ class FaclityMiddleware
         if(auth()->user() && auth()->user()->Role_id == 3 ){
             return $next($request);
         }
-        return redirect('/');
+        return $next($request);
+
     }
 }

@@ -19,6 +19,7 @@ class StudentMiddleware
         if(auth()->user() && auth()->user()->Role_id == 4 ){
             return $next($request);
         }
-        return redirect('/');
+        return $next($request);
+
     }
 }

@@ -9,14 +9,18 @@ use Illuminate\Support\Facades\Session;
 class addsubjectController extends Controller
 {
     function showsubject() {
+
+        
         $show_semester = DB::table('semester')->get();
         $show_subject = DB::table('subjects')->get();
         if (Session::has('user')) {
             return view('Pages.admin.subjects',['semester'=>$show_semester,'subject'=>$show_subject]);
+           
         }else{
-            return view('index');
+            return redirect('/');
         }
     }
+
 
     function addubject(Request $request) {
 

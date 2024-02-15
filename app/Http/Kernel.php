@@ -80,14 +80,7 @@ class Kernel extends HttpKernel
         'checkFaclity'=> \App\Http\Middleware\FaclityMiddleware::class,
         'checkStudent'=> \App\Http\Middleware\StudentMiddleware::class,
         'checkUser'=> \App\Http\Middleware\UserMiddleware::class
-        // 'checkUserRole' => \App\Http\Middleware\CheckUserRole::class,
-        // 'api' => [
-        //     \Illuminate\Session\Middleware\AuthenticateSession::class,
-        //     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        //     \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
-        //     \Illuminate\Routing\Middleware\SubstituteBindings::class,
-
-        // ],
+        
 
     ];
 }

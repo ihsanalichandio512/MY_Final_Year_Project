@@ -19,6 +19,7 @@ class UserMiddleware
         if(auth()->user() && auth()->user()->Role_id == 2 ){
             return $next($request);
         }
-        return redirect('/');
+        return $next($request);
+
     }
 }

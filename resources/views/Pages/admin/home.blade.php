@@ -43,7 +43,7 @@
                 <i class="fa fa-book fa-3x text-danger "></i>
                 <div class="ms-3">
                     <p class="mb-2">Add Subject</p>
-                    <h6 class="mb-0"><a class="btn btn-sm btn-success " type="button" href={{ route('show.subject') }}>Add Subject</a></h6>
+                    <h6 class="mb-0"><a class="btn btn-sm btn-success " type="button" href="{{URL::to('/admin/showsubject')}}">Add Subject</a></h6>
                 </div>
             </div>
         </div>
