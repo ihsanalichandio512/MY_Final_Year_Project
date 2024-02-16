@@ -8,14 +8,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class batch extends Model
 {
+    public function students()
+    {
+        return $this->hasMany(students::class);
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(attendances::class);
+    }
     // protected $table = 'batch';
     protected $primaryKey = 'Batch_id';
 
     use HasFactory;
     public $timestamps = false;
 
-    public function students()
-    {
-        return $this->hasMany(students::class);
-    }
 }

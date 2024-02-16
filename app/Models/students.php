@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class students extends Model
 {
+    public function batch()
+    {
+        return $this->belongsTo(batch::class);
+    }
     use HasFactory;
 
     protected $primaryKey = 'Student_id';
@@ -16,7 +20,5 @@ class students extends Model
         return $this->hasMany(semester::class);
     }
 
-    public function batches() {
-        return $this->hasMany(batch::class);
-    }
+   
 }

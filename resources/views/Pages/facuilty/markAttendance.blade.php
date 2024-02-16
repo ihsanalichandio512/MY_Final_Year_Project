@@ -29,7 +29,7 @@
               <form  method="get">
                 @csrf
             <div class="form-floating mb-3">
-                <select class="form-control" name="batch" id="batch">
+                <select class="form-control" name="batch_id" id="batch">
                     <option selected disabled>Select Batch</option>
                     @foreach ($batch as $batch)
                         <option value="{{ $batch->Batch_id }}">{{ $batch->Title }}</option>
@@ -37,13 +37,13 @@
                 </select>
             </div>
             <div class="form-floating mb-3">
-                <select class="form-control" name="degree" id="degree">
+                <select class="form-control" name="degree_id" id="degree">
 
                 </select>
             </div>
 
             <div class="form-floating mb-3">
-                <select class="form-control" name="semester" id="semester">
+                <select class="form-control" name="semester_id" id="semester">
 
                 </select>
             </div>
@@ -52,22 +52,22 @@
         </div>
       </form>
     </div>
+    <div class="table-responsive">
+        <table class="table" id="students">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Contact_No</th>
+                    <th scope="col">Cnic</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Picture</th>
+                    <th scope="col">Gender</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
 </div>
-</div>
-<div class="table-responsive">
-    <table class="table" id="students">
-        <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Contact_No</th>
-                <th scope="col">Cnic</th>
-                <th scope="col">Address</th>
-                <th scope="col">Picture</th>
-                <th scope="col">Gender</th>
-            </tr>
-        </thead>
-    </table>
 </div>
 </div>
 
