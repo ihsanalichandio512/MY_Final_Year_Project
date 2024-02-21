@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class students extends Model
 {
-    public function batch()
+    public function attendances()
     {
-        return $this->belongsTo(batch::class);
+        return $this->hasMany(attendances::class, 'Student_id', 'id');
     }
     use HasFactory;
 

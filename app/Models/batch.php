@@ -17,6 +17,11 @@ class batch extends Model
     {
         return $this->hasMany(attendances::class);
     }
+
+    public function degrees()
+    {
+        return $this->hasMany(degrees::class, 'Batch_id', 'id');
+    }
     // protected $table = 'batch';
     protected $primaryKey = 'Batch_id';
 

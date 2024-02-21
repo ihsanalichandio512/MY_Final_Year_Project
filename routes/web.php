@@ -60,10 +60,23 @@ Route::group(['middleware'=>['web','checkAdmin']],function(){
     
 });
 
+// Route::group(['middleware' => ['web', 'checkFaculty']], function () {
+//     Route::get('/show/faculty/page', [facuiltyController::class, 'showAttendancePage'])->name('showAttendancePage');
+//     Route::post('/mark-attendance/submit', [facuiltyController::class, 'markAttendanceSubmit'])->name('mark-attendance-submit');
+//     Route::get('/mark-attendance/get-degrees/{batchId}', [facuiltyController::class, 'getDegrees'])->name('mark-attendance.get-degrees');
+//     Route::get('/mark-attendance/get-semesters/{degreeId}', [facuiltyController::class, 'getSemesters'])->name('mark-attendance.get-semesters');
+//     Route::post('/mark-attendance/get-students', [facuiltyController::class, 'getStudents'])->name('mark-attendance.get-students');
+// });
+
+
 Route::group(['middleware'=>['web','checkFaclity']],function(){
     Route::get('/show/faclity/page',[faclityController::class,'showhome'])->name('showhome');
     Route::get('/show/attendance/page',[faclityController::class,'showAttendancePage'])->name('showAttendancePage');
-
+    Route::get('/mark-attendance', [faclityController::class, 'index'])->name('mark-attendance');
+    Route::post('/mark-attendance/submit', [faclityController::class, 'markAttendanceSubmit'])->name('mark-attendance-submit');
+    Route::get('/mark-attendance/get-degrees', [faclityController::class, 'getDegrees'])->name('mark-attendance.get-degrees');
+    Route::get('/mark-attendance/get-semesters', [faclityController::class, 'getSemesters'])->name('mark-attendance.get-semesters');
+    Route::post('/mark-attendance/get-students', [faclityController::class, 'getStudents'])->name('mark-attendance.get-students');
     Route::get('/get-degrees', [faclityController::class, 'getDegrees']);
 Route::get('/get-semesters', [faclityController::class, 'getSemesters']);
 Route::get('/get-students', [faclityController::class, 'getStudents']);
