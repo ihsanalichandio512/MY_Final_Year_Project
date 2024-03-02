@@ -81,7 +81,7 @@ class loginController extends Controller
                 return response()->view('errors.404', [], 404);
             }
         } else {
-            return view('login.page')->with('error', 'Incorrect password');
+            return view('index')->with('error', 'Incorrect password');
         }
     } else {
         return view('index')->with('error', 'User not found');

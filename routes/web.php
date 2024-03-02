@@ -43,8 +43,8 @@ use PHPUnit\TextUI\XmlConfiguration\Group;
 */
 
 Route::group(['middleware'=>['web','checkAdmin']],function(){
-    Route::get('/admin',[adminController::class,'index'])->name('adminhome');
-    Route::get('/admin/showsubject',[addsubjectController::class,'showsubject'])->name('showsubject');
+    Route::get('/admin',[adminController::class,'index'])->name('admin.home');
+    Route::get('/admin/showsubject',[addsubjectController::class,'showsubject'])->name('show.subject');
     Route::get('/admin/addsubject',[addsubjectController::class,'addubject'])->name('addsubject');
     Route::get('/admin/showbatch',[addbatchController::class,'showBatch'])->name('showbatch');
     Route::get('/admin/addbatch',[addbatchController::class,'addBatch'])->name('addbatch');
@@ -72,14 +72,11 @@ Route::group(['middleware'=>['web','checkAdmin']],function(){
 Route::group(['middleware'=>['web','checkFaclity']],function(){
     Route::get('/show/faclity/page',[faclityController::class,'showhome'])->name('showhome');
     Route::get('/show/attendance/page',[faclityController::class,'showAttendancePage'])->name('showAttendancePage');
-    Route::get('/mark-attendance', [faclityController::class, 'index'])->name('mark-attendance');
-    Route::post('/mark-attendance/submit', [faclityController::class, 'markAttendanceSubmit'])->name('mark-attendance-submit');
-    Route::get('/mark-attendance/get-degrees', [faclityController::class, 'getDegrees'])->name('mark-attendance.get-degrees');
-    Route::get('/mark-attendance/get-semesters', [faclityController::class, 'getSemesters'])->name('mark-attendance.get-semesters');
-    Route::post('/mark-attendance/get-students', [faclityController::class, 'getStudents'])->name('mark-attendance.get-students');
-    Route::get('/get-degrees', [faclityController::class, 'getDegrees']);
-Route::get('/get-semesters', [faclityController::class, 'getSemesters']);
-Route::get('/get-students', [faclityController::class, 'getStudents']);
+   Route::post('/attendance/store', [faclityController::class, 'storeAttendance'])->name('attendance.store');
+   Route::get('/attendance/fetch/semesters', [faclityController::class, 'fetchSemesters'])->name('attendance.fetch.semesters');
+   Route::get('/attendance/fetch/batches', [faclityController::class, 'fetchBatches'])->name('attendance.fetch.batches');
+Route::get('attendance.fetch.students', [faclityController::class, 'fetchStudents'])->name('attendance.fetch.students');
+
 });
 
 Route::group(['middleware',['web','checkStudent']],function(){

@@ -3,185 +3,212 @@
 
 @section('attendence')
 
-<div class="container-fluid">
-    @if ($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fa fa-exclamation-circle me-2"></i>
-        @foreach ($errors->all() as $error)
-            <strong>{{ $error }}</strong>
-        @endforeach
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif
-
-    <div class="container mt-3">
-        <h1 class="text-center">Mark Attendance</h1>
-        <form action="{{ route('mark-attendance-submit') }}" class="d-flex justify-content-between flex-column d-sm-flex " method="post">
-            @csrf
-
-            {{-- Select Batch --}}
-            <div class="form-group my-2">
-                <label for="batch_id">Batch:</label>
-                <select name="batch_id" id="batch_id" class="form-control" required>
-                    <option value="">Select Batch</option>
-                    @foreach ($batches as $batch)
-                        <option value="{{ $batch->Batch_id }}">{{ $batch->Title }}</option>
-                    @endforeach
-                </select>
+    <div class="container-fluid">
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa fa-exclamation-circle me-2"></i>
+                @foreach ($errors->all() as $error)
+                    <strong>{{ $error }}</strong>
+                @endforeach
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+        @endif
 
-            {{-- Select Degree (dynamically populated) --}}
-            <div class="form-group my-2">
-                <label for="degree_id">Degree:</label>
-                <select name="degree_id" id="degree_id" class="form-control" required disabled>
-                    <option value="">Select Batch First</option>
-                </select>
-            </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-lg-6 d-flex  justify-content-center flex-column ">
+                    <h1 class="text-center">Mark Attendance</h1>
+                    <form action="{{ route('attendance.store') }}" class="" method="POST">
+                        @csrf
+                        {{-- Select Batch --}}
+                        {{-- <div class="form-group my-2">
+                        <label for="batch_id">Degree:</label>
+                        <select name="batch_id" id="batch_id" class="form-control" required>
+                            <option value="">Select Degree</option>
+                            @foreach ($degree as $Degree)
+                                <option value="{{ $Degree->Degree_id }}">{{ $Degree->Title }}</option>
+                            @endforeach
+                        </select>
+                    </div> --}}
 
-            {{-- Select Semester (dynamically populated) --}}
-            <div class="form-group my-2">
-                <label for="semester_id">Semester:</label>
-                <select name="semester_id" id="semester_id" class="form-control" required disabled>
-                    <option value="">Select Degree First</option>
-                </select>
-            </div>
+                        <div class="form-group">
+                            <label for="degree_id">Degree:</label>
+                            <select name="degree_id" id="degree_id" class="form-control" required
+                                onchange="fetchBatches(this.value)">
+                                <option value="" selected disabled>Select Degree</option>
+                                @foreach ($degrees as $degree)
+                                    <option value="{{ $degree->Degree_id }}">{{ $degree->Title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-            {{-- Search for Students (optional) --}}
-            <div class="form-group my-2">
-                <label for="search">Search Students:</label>
-                <input type="text" name="search" id="search" class="form-control" placeholder="Enter name or roll number">
-            </div>
+                        <div class="form-group">
+                            <label for="batch_id">Batch:</label>
+                            <select name="batch_id" id="batch_id" class="form-control" required disabled>
+                                <option value="">-- Select Batch --</option>
+                            </select>
+                        </div>
 
-            {{-- Fetch Students Button --}}
-            <button type="button" id="fetch-students-btn" class="btn btn-primary my-2">Fetch Students</button>
+                        <div class="form-group">
+                            <label for="semester_id">Semester:</label>
+                            <select name="semester_id" id="semester_id" class="form-control" required disabled>
+                                <option value="">-- Select Semester --</option>
+                            </select>
+                        </div>
 
-            {{-- Table to display students with radio buttons for presence/absence --}}
-            <table class="table table-bordered my-2" id="students-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Roll Number</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{-- This section will be populated dynamically with student data --}}
-                </tbody>
-            </table>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if ($students)
+                                    @foreach ($students as $student)
+                                        <tr>
+                                            <td>{{ $student->Name }}</td>
+                                            <td>{{ $student->Gender }}</td>
+                                            <td>{{ $student->Picture }}</td>
+                                            <td>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="student_id[{{ $student->Student_id }}]"
+                                                        id="present{{ $student->Student_id }}" value="present">
+                                                    <label class="form-check-label"
+                                                        for="present{{ $student->Student_id }}">Present</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="student_id[{{ $student->Student_id }}]"
+                                                        id="absent{{ $student->Student_id }}" value="absent">
+                                                    <label class="form-check-label"
+                                                        for="absent{{ $student->Student_id }}">Absent</label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
 
-            {{-- Mark Attendance Button --}}
-            <button type="submit" class="btn btn-success my-2">Mark Attendance</button>
-        </form>
-    </div>
+                        <button type="submit" class="btn btn-primary">Mark Attendance</button>
+                    </form>
 
-    {{-- Show success message if attendance is marked --}}
-    @if (session()->has('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+                    <script>
+                        function fetchBatches(degreeId) {
+                            if (degreeId) {
+                                $.ajax({
+                                    url: "{{ route('attendance.fetch.batches') }}", // Your custom route to fetch batches
+                                    data: {
+                                        degree_id: degreeId
+                                    },
+                                    success: function(data) {
+                                        console.log(data);
+                                        // Update batch select
+                                        $('#batch_id').empty().prop('disabled', false);
+                                        $('#batch_id').append('<option value="">-- Select Batch --</option>');
+                                        data.forEach(function(batch) {
+                                            $('#batch_id').append('<option value="' + batch.Batch_id + '">' + batch
+                                                .Title + '</option>');
+                                        });
 
-    {{-- Include JavaScript for dynamic population and error handling --}}
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Populate degrees based on selected batch
-            $('#batch_id').on('change', function() {
-                var batchId = $(this).val();
-                if (batchId) {
-                    $.ajax({
-                        url: "{{ route('mark-attendance.get-degrees', ':batchId') }}".replace(':batchId', batchId),
-                        method: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#degree_id').empty().append('<option value="">Select Degree</option>');
-                            $.each(data, function(index, degree) {
-                                $('#degree_id').append('<option value="' + degree.Degree_id + '">' + degree.Title + '</option>');
+                                        // Clear and disable semesters initially
+                                        $('#semester_id').empty().prop('disabled', true);
+
+                                        // Fetch semesters only if a batch is selected
+                                        $('#batch_id').change(function() {
+                                            var batchId = $(this).val();
+                                            if (batchId) {
+                                                $.ajax({
+                                                    url: "{{ route('attendance.fetch.semesters') }}", // Your custom route to fetch semesters
+                                                    data: {
+                                                        batch_id: batchId
+                                                    },
+                                                    success: function(data) {
+                                                        $('#semester_id').empty().prop('disabled', false);
+                                                        $('#semester_id').append(
+                                                            '<option value="">-- Select Semester --</option>'
+                                                        );
+                                                        data.forEach(function(semester) {
+                                                            $('#semester_id').append(
+                                                                '<option value="' + semester
+                                                                .Semester_id + '">' + semester
+                                                                .Title + '</option>');
+                                                        });
+                                                    },
+                                                    error: function(error) {
+                                                        console.error(error);
+                                                    }
+                                                });
+                                            } else {
+                                                $('#semester_id').empty().prop('disabled',
+                                                    true); // Clear and disable semesters if no batch is selected
+                                            }
+                                        });
+                                    },
+                                    error: function(error) {
+                                        console.error(error);
+                                    }
+                                });
+                            } else {
+                                $('#batch_id').empty().prop('disabled', true);
+                                $('#semester_id').empty().prop('disabled', true); // Clear and disable semesters if degree is not selected
+                            }
+
+                            $('#semester_id').change(function() {
+                                var batchId = $('#batch_id').val();
+                                var semesterId = $(this).val();
+
+                                if (batchId && semesterId) {
+                                    // Additional code to fetch students
+                                    fetchStudents(batchId, semesterId);
+                                } else {
+                                    // Clear and disable student list if no batch or semester is selected
+                                    $('#student_list').empty();
+                                    
+                                }
                             });
-                            $('#degree_id').removeAttr('disabled');
-                        },
-                        error: function(xhr, status, error) {
-                            console.log("Error fetching degrees:", error);
-                            // Handle error, e.g., display an error message
+
+                            function fetchStudents(batchId, semesterId) {
+                                $.ajax({
+                                    url: "{{ route('attendance.fetch.students') }}", // Your custom route to fetch students
+                                    data: {
+                                        batch_id: batchId,
+                                        semester_id: semesterId
+                                    },
+                                    success: function(data) {
+                                        console.log(data);
+                                        // Update student list using the received data
+                                        updateStudentList(data);
+                                    },
+                                    error: function(error) {
+                                        console.error(error);
+                                    }
+                                });
+
+                                function updateStudentList(students) {
+                                    // Clear existing student list entries
+                                    $('#student_list').empty();
+
+                                    // Loop through each student and create list elements
+                                    students.forEach(function(student) {
+                                        // Build student list element with relevant information (e.g., name, status)
+                                        var studentListItem = '<li>' + student.Name + ' - ... (status)</li>';
+
+                                        // Add the student list element to the container
+                                        $('#student_list').append(studentListItem);
+                                       
+                                    });
+                                }
+                            }
                         }
-                    });
-                } else {
-                    $('#degree_id').empty().append('<option value="">Select Batch First</option>').attr('disabled', true);
-                    $('#semester_id').empty().append('<option value="">Select Degree First</option>').attr('disabled', true);
-                }
-            });
+                    </script>
 
-            // Populate semesters based on selected degree
-            $('#degree_id').on('change', function() {
-                var degreeId = $(this).val();
-                if (degreeId) {
-                    $.ajax({
-                        url: "{{ route('mark-attendance.get-semesters', ':degreeId') }}".replace(':degreeId', degreeId),
-                        method: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#semester_id').empty().append('<option value="">Select Semester</option>');
-                            $.each(data, function(index, semester) {
-                                $('#semester_id').append('<option value="' + semester.id + '">' + semester.Title + '</option>');
-                            });
-                            $('#semester_id').removeAttr('disabled');
-                        },
-                        error: function(xhr, status, error) {
-                            console.log("Error fetching semesters:", error);
-                            // Handle error, e.g., display an error message
-                        }
-                    });
-                } else {
-                    $('#semester_id').empty().append('<option value="">Select Degree First</option>').attr('disabled', true);
-                }
-            });
 
-            // Fetch students based on selected filters and populate table
-            $('#fetch-students-btn').on('click', function() {
-                var batchId = $('#batch_id').val();
-                var degreeId = $('#degree_id').val();
-                var semesterId = $('#semester_id').val();
-                var search = $('#search').val();
+                </div>
+            </div>
 
-                if (batchId && degreeId && semesterId) {
-                    $.ajax({
-                        url: "{{ route('mark-attendance.get-students') }}",
-                        method: 'POST',
-                        dataType: 'json',
-                        data: {
-                            batch_id: batchId,
-                            degree_id: degreeId,
-                            semester_id: semesterId,
-                            search: search,
-                            _token: "{{ csrf_token() }}",
-                        },
-                        success: function(data) {
-                            $('#students-table tbody').empty();
-                            $.each(data, function(index, student) {
-                                var row = '<tr>';
-                                row += '<td>' + student.Name + '</td>';
-                                row += '<td>' + student.Roll_Number + '</td>';
-                                row += '<td>';
-                                row += '<input type="radio" name="students[' + student.id + ']" value="Present" checked>';
-                                row += '<label for="present">Present</label>';
-                                row += '<input type="radio" name="students[' + student.id + ']" value="Absent">';
-                                row += '<label for="absent">Absent</label>';
-                                row += '</td>';
-                                row += '</tr>';
-                                $('#students-table tbody').append(row);
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("Error fetching students:", error);
-                            // Handle error, e.g., display an error message
-                        }
-                    });
-                } else {
-                    // Handle missing selections, e.g., display an error message
-                    console.log('error');
-                }
-            });
-        });
+        </div>
 
-    </script>
-</div>
-
-@endsection
+    @endsection

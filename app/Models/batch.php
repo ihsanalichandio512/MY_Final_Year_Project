@@ -8,24 +8,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class batch extends Model
 {
+    use HasFactory;
+
+    protected $fillable = [
+        'Title',
+        'Degree_id', // Foreign key to degrees table
+    ];
+
+    public function degree()
+    {
+        return $this->belongsTo(degrees::class);
+    }
+
+    // Uncomment and modify this relationship if you use a student_batch link table
     public function students()
     {
-        return $this->hasMany(students::class);
+        return $this->belongsToMany(students::class);
     }
-
-    public function attendances()
+    public function semesters()
     {
-        return $this->hasMany(attendances::class);
+        return $this->hasMany(semester::class); // Define the relationship
     }
-
-    public function degrees()
-    {
-        return $this->hasMany(degrees::class, 'Batch_id', 'id');
-    }
-    // protected $table = 'batch';
-    protected $primaryKey = 'Batch_id';
-
-    use HasFactory;
     public $timestamps = false;
 
 }

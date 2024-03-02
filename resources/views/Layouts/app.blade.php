@@ -67,6 +67,7 @@
 
  <!-- Template Stylesheet -->
  <link href="{{asset('theme/css/style.css')}}" rel="stylesheet">
+ <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
 
 

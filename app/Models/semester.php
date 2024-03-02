@@ -9,16 +9,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class semester extends Model
 {
 
-    public function degree()
-    {
-        return $this->belongsTo(degrees::class, 'Degree_id', 'id');
-    }
     use HasFactory;
-    protected $table = 'semester';
-    protected $primaryKey = 'Semester_id';
-    public $timestamps = false;
-    public function student() {
-        return $this->belongsTo(students::class);
+
+    protected $fillable = [
+        'Title',
+    ];
+
+    // Uncomment and modify this relationship if you use a student_semester link table
+    public function students()
+    {
+        return $this->belongsToMany(students::class);
+    }
+
+    public function attendanceRecords()
+    {
+        return $this->hasMany(attendances::class);
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(batch::class); // Define the relationship
     }
 
 }

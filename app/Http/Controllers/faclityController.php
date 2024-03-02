@@ -23,58 +23,91 @@ class faclityController extends Controller
     }
 
 
-    public function showAttendancePage() {
+    public function showAttendancePage(Request $request) {
         if (Session::has('user')) {
-            $batches = DB::table('batch')->get();
-            return view('Pages.facuilty.markAttendance', compact('batches'));
+        //    $degree = degrees::all();
+        $degrees = degrees::all();
+        $batches = null;
+        $semesters = null;
+        $students = null;
+
+        if ($request->has('degree_id')) {
+            $batches = batch::where('degree_id', $request->degree_id)->get();
+        }
+
+        if ($request->has('batch_id')) {
+            $semesters = semester::where('batch_id', $request->batch_id)->get();
+        }
+
+        if ($request->has('semester_id')) {
+            $students = students::where('semester_id', $request->semester_id)->get();
+        }
+            return view('Pages.facuilty.markAttendance', compact('degrees', 'batches', 'semesters', 'students'));
         }else{
             return view('index');
         }
     }
 
-    public function getDegrees($batchId)
+    public function storeAttendance(Request $request)
     {
-        $degrees = degrees::where('Degree_id', $batchId)->get();
-        return response()->json($degrees);
+        if ($request->has('student_id')) {
+            foreach ($request->student_id as $studentId => $status) {
+                attendances::create([
+                    'student_id' => $studentId,
+                    'degree_id' => $request->degree_id,
+                    'batch_id' => $request->batch_id,
+                    'semeste_id' => $request->semester_id,
+                    'dateTime' => date('Y-m-d'), // Today's date
+                    'attendence' => $status, // Present or Absent
+                ]);
+            }
+        }
+
+        return redirect()->route('showAttendancePage')->with('success', 'Attendance marked successfully!');
     }
 
-    public function getSemesters($degreeId)
+    public function fetchBatches(Request $request)
     {
-        $semesters = Semester::where('Degree_id', $degreeId)->get();
+        $degreeId = $request->get('degree_id');
+
+        if ($degreeId) {
+            $batches = DB::table('batch')->where('Degree_id', $degreeId)->get();
+            return response()->json($batches);
+        }else{
+            echo 'error';
+        }
+
+        return response()->json([]); // Return an empty array if no degree ID is provided
+    }
+
+    public function fetchSemesters(Request $request)
+{
+    $batchId = $request->get('batch_id');
+
+    if ($batchId) {
+        // Fetch semesters based on the batch ID
+        $semesters = DB::table('semester')->where('Batch_id', $batchId)->get();
         return response()->json($semesters);
     }
 
-    public function getStudents(Request $request)
-    {
-        $students = students::where('Batch_id', $request->batch_id)
-            ->where('Degree_id', $request->degree_id)
-            ->where('Semester_id', $request->semester_id)
-            ->when($request->search, function ($query, $search) {
-                $query->where('Name', 'like', '%' . $search . '%');
-            })
-            ->get();
+    return response()->json([]); // Return an empty array if no batch ID is provided
+}
 
-        return response()->json($students);
-    }
+public function fetchStudents(Request $request)
+{
 
-    public function markAttendanceSubmit(Request $request)
-    {
-        $request->validate([
-            'batch_id' => 'required|exists:batches,id',
-            'degree_id' => 'required|exists:degrees,id',
-            'semester_id' => 'required|exists:semesters,id',
-            // Add other validation rules
-        ]);
+    $batchId = $request->input('batch_id');
+    $semesterId = $request->input('semester_id');
 
-        foreach ($request->students as $studentId => $status) {
-            attendances::updateOrCreate(
-                ['student_id' => $studentId, 'date' => Carbon::now()],
-                ['status' => $status]
-            );
-        }
+    $students = DB::table(DB::raw('batch as b'))
+    ->join('semester', 'semester.Semester_id', '=', 'b.Batch_id')
+    ->join('students', 'students.Student_id', '=', 'semester.Semester_id')
+    ->select('students.*')
+    ->where('b.Batch_id', $batchId)
+    ->get();
 
-        return redirect()->back()->with('success', 'Attendance marked successfully!');
-    }
+    return response()->json($students); // Assuming you're returning JSON data
+}
 
 }
 
